@@ -1,0 +1,12 @@
+Flask
+Flask-JWT-Extended
+Flask-Limiter
+Flask-Login
+Flask-RESTX
+Flask-SQLAlchemy
+Flask-Talisman
+Flask-WTF
+openpyxl
+psycopg2-binary
+python-dotenv
+wtforms

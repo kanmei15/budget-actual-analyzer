@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>予算データアップロード</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/upload-and-aggregate.css') }}">
+</head>
+
+<body>
+    <h1>予算データアップロード</h1>
+
+    <div id="upload-budget-area" class="upload-area">
+        <p>ここにBNオーダ損益状況.xlsxをドラッグ＆ドロップしてください</p>
+        <input type="file" id="file-input-budget" hidden>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/upload-and-aggregate.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/init-upload-budget.js') }}"></script>
+</body>
+
+</html>

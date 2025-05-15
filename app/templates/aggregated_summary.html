@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>顧客別損益データ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/aggregated_summary.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/upload-and-aggregate.css') }}">
+</head>
+
+<body>
+    <h1>顧客別損益データ</h1>
+
+    <div id="upload-actual-area" class="upload-area">
+        <p>ここにBNオーダ損益状況.xlsxをドラッグ＆ドロップしてください</p>
+        <input type="file" id="file-input-actual" hidden>
+    </div>
+
+    <div class="source-control-container">
+        <label for="source-select">データ種別:</label>
+        <select id="source-select">
+            <option value="0">予算</option>
+            <option value="1">実績</option>
+            <option value="2">予実差</option>
+        </select>
+        <label for="period-select">表示期間:</label>
+        <select id="period-select">
+            <option value="all">すべて</option>
+            {% for m in range(2, 13) %}
+            <option value="month_{{ m }}">{{ m }}月</option>
+            {% endfor %}
+            <option value="month_1">1月</option>
+            <option value="first_half">上期</option>
+            <option value="second_half">下期</option>
+            <option value="full_year">通期</option>
+        </select>
+    </div>
+
+    <div class="table-wrapper">
+        <table border="1" id="results-table">
+            <thead>
+                <!-- JavaScriptで埋める -->
+            </thead>
+            <tbody>
+                <!-- JavaScriptで埋める -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/aggregate-table.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/upload-and-aggregate.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/init-upload-actual.js') }}"></script>
+</body>
+
+</html>

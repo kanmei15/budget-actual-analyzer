@@ -1,0 +1,130 @@
+/* ラッパーで横スクロールを可能に */
+.table-wrapper {
+    overflow-x: auto;
+    position: relative;
+    max-width: 100%;
+    border: 0px solid #ccc;
+}
+
+.parent-header {
+    font-weight: bold;
+    background-color: #eef;
+}
+
+/* テーブル全体設定 */
+#results-table {
+    table-layout: auto;
+    border-collapse: collapse;
+    width: max-content;
+}
+
+/* ヘッダー・セル共通 */
+#results-table th,
+#results-table td {
+    padding: 4px 6px;
+    border: 1px solid #ccc;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+/* 偶数行の背景色 */
+#results-table tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+#results-table tbody tr:nth-child(even) {
+    background-color: #f7fbff;
+}
+
+/* ヘッダー中央 */
+#results-table th {
+    text-align: center;
+    background-color: #f0f0f0 !important;
+}
+
+/* ===== 固定列（Group Key） ===== */
+#results-table th.group-key,
+#results-table td.group-key {
+    width: 130px;
+    position: sticky;
+    left: 0;
+    background-color: #fff;
+    z-index: 2;
+    border-right: 1px solid #ccc;
+    white-space: nowrap;
+    background-color: inherit;
+}
+
+/* データセル種別ごとの幅 */
+#results-table th.internal,
+#results-table th.partner,
+#results-table th.bulk {
+    width: 50px;
+}
+
+#results-table th.order,
+#results-table th.sales,
+#results-table th.profit {
+    width: 70px;
+}
+
+#results-table th.rate {
+    width: 60px;
+}
+
+td.internal,
+td.partner,
+td.bulk,
+td.order,
+td.sales,
+td.profit,
+td.rate {
+    text-align: right;
+}
+
+/* マイナス値強調 */
+.negative {
+    color: red;
+}
+
+/* 合計行のスタイル */
+.summary-cell {
+    background-color: #f0f0f0 !important;
+    font-weight: bold;
+}
+
+/* --- コントロール部 --- */
+.source-control-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+#source-select,
+#period-select {
+    padding: 4px 8px;
+    font-size: 14px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+label[for="source-select"],
+label[for="period-select"] {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+#run-actual-and-diff {
+    padding: 6px 12px;
+    font-size: 14px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#run-actual-and-diff:hover {
+    background-color: #0056b3;
+}

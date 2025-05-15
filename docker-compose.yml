@@ -1,0 +1,32 @@
+services:
+  postgres:
+    build:
+      context: ./postgres
+      dockerfile: Dockerfile # PostgreSQL用のDockerfile（カスタマイズが必要な場合）
+    container_name: postgres-container
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./postgres/init-scripts:/docker-entrypoint-initdb.d
+
+  flask:
+    build:
+      context: .
+      dockerfile: app/Dockerfile # Flask用のDockerfile
+    container_name: flask-app
+    env_file:
+      - .env
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+    command: python run.py
+
+volumes:
+  pgdata:
+    driver: local

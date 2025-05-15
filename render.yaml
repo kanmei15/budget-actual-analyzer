@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: flask-app
+    env: docker
+    repo: https://github.com/hiro-sano666/budget-actual-analyzer
+    branch: master
+    region: oregon
+    plan: free
+    dockerContext: .
+    dockerfilePath: ./app/Dockerfile
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_CONFIG
+        value: ProductionConfig
+      - key: SECRET_KEY
+        value: Q2g9fi-3hMz-ej2C9ZhbLNCdW3tk4cVEeUidXpC5b5mbtrTm9p8L5wm4EjY4HsDGSDC6uCnzpFuHehiiLjZQJD_YdZg6L7JGcRmrXRuXsN8mMsaWN88f-7Th
+      - key: JWT_SECRET_KEY
+        value: Eiiig3U4m2PR2Kzyzy6bfeB3aR5GRQLyngjQaKTcZZPnXSF2p-C6nynS_3zeLYTwNtZ9jF8xPSamejTSi8TPcRSXrycaBzXFjeGNckkeG_RhDH2_saCwyWskBRM24yFNSwPN_eAVBH7_Uxwm4xfCTNMMH6YnKZUS
+      - key: POSTGRES_USER
+        value: user
+      - key: POSTGRES_PASSWORD
+        value: VEdABqLHDZwTiNf6ExJLmykZ4h90gGro
+      - key: POSTGRES_DB
+        value: mydb_efr8
+      - key: POSTGRES_HOST
+        value: dpg-d07c3fali9vc73f5rcug-a
+      - key: POSTGRES_PORT
+        value: 5432
