@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const sourceType = this.value;
         const apiUrl = getApiUrl(sourceType);
         const map = getFieldMap(sourceType);
-        const data = await fetchData(apiUrl);
+        const data = await fetchData(apiUrl, 5, 200);
         currentGroupedData = groupDataByParent(data, map);
         renderTable(currentGroupedData);
     });
@@ -60,14 +60,39 @@ function getFieldMap(sourceType) {
 }
 
 // 指定URLからデータを取得し、JSONとして返す
-async function fetchData(apiUrl) {
-    const response = await fetch(apiUrl, {
-        method: 'GET',
-        headers: {
-            "Content-Type": "application/json"
+async function fetchData(apiUrl, retries = 5, delay = 200) {
+    //const response = await fetch(apiUrl, {
+    //    method: 'GET',
+    //    headers: {
+    //        "Content-Type": "application/json"
+    //    }
+    //});
+    //return await response.json();
+    for (let attempt = 1; attempt <= retries; attempt++) {
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            return await response.json();
+
+        } catch (error) {
+            console.warn(`Fetch failed (attempt ${attempt}/${retries}):`, error);
+
+            if (attempt < retries) {
+                await new Promise(res => setTimeout(res, delay * Math.pow(3, attempt - 1)));
+            } else {
+                throw new Error(`API fetch failed after ${retries} attempts`);
+            }
         }
-    });
-    return await response.json();
+    }
 }
 
 // データを親キー、グループキー、月で分類してネスト構造に変換

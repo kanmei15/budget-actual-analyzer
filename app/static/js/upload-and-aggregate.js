@@ -48,26 +48,30 @@ function uploadAndAggregate(file, uploadEndpoint, aggregateEndpoint, label) {
     const formData = new FormData();
     formData.append('file', file);
 
-    fetch(uploadEndpoint, {
-        method: 'POST',
-        body: formData,
-        credentials: 'include',
-        headers: {
-            'X-CSRF-TOKEN': csrfToken
-        }
-    })
-        .then(res => {
-            if (!res.ok) {
-                //throw new Error('アップロード失敗');
-                // レスポンスが失敗した場合のエラー処理
-                return res.text().then(text => {
-                    throw new Error(`アップロード失敗: ${res.status} - ${text}`);
-                });
+    const maxRetries = 5;
+    const baseDelay = 200;
+
+    async function retryableUpload(attempt = 1) {
+        try {
+            // アップロード
+            const uploadRes = await fetch(uploadEndpoint, {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                }
+            });
+
+            if (!uploadRes.ok) {
+                const text = await uploadRes.text();
+                throw new Error(`アップロード失敗: ${uploadRes.status} - ${text}`);
             }
-            return res.json();
-        })
-        .then(uploadData => {
-            return fetch(aggregateEndpoint, {
+
+            const uploadData = await uploadRes.json();
+
+            // 集計
+            const aggregateRes = await fetch(aggregateEndpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -79,15 +83,71 @@ function uploadAndAggregate(file, uploadEndpoint, aggregateEndpoint, label) {
                     label: label
                 })
             });
-        })
-        .then(res => {
-            if (!res.ok) {
-                throw new Error('集計失敗');
+
+            if (!aggregateRes.ok) {
+                const text = await aggregateRes.text();
+                throw new Error(`集計失敗: ${aggregateRes.status} - ${text}`);
             }
+
             alert(`${label}のアップロード＆集計完了！`);
+
+        } catch (err) {
+            console.warn(`${label}の試行 ${attempt}/${maxRetries} 失敗:`, err);
+
+            if (attempt < maxRetries) {
+                const delay = baseDelay * Math.pow(2, attempt - 1);
+                await new Promise(res => setTimeout(res, delay));
+                return retryableUpload(attempt + 1);
+            } else {
+                alert(`${label}の処理に失敗しました: ${err.message}`);
+                console.error('最終エラー詳細:', err);
+            }
+        }
+    }
+
+    retryableUpload();
+    /*
+        fetch(uploadEndpoint, {
+            method: 'POST',
+            body: formData,
+            credentials: 'include',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken
+            }
         })
-        .catch(err => {
-            alert(`${label}の処理に失敗しました: ${err.message}`);
-            console.error('エラー詳細:', err);
-        });
+            .then(res => {
+                if (!res.ok) {
+                    //throw new Error('アップロード失敗');
+                    // レスポンスが失敗した場合のエラー処理
+                    return res.text().then(text => {
+                        throw new Error(`アップロード失敗: ${res.status} - ${text}`);
+                    });
+                }
+                return res.json();
+            })
+            .then(uploadData => {
+                return fetch(aggregateEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        fileId: uploadData.fileId,
+                        label: label
+                    })
+                });
+            })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('集計失敗');
+                }
+                alert(`${label}のアップロード＆集計完了！`);
+            })
+            .catch(err => {
+                alert(`${label}の処理に失敗しました: ${err.message}`);
+                console.error('エラー詳細:', err);
+            });
+    */
 }
